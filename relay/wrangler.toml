@@ -1,0 +1,27 @@
+name = "relay"
+main = "src/index.ts"
+compatibility_date = "2024-04-05"
+compatibility_flags = ["nodejs_compat"]
+account_id = "9263571f8d9bfc7b59b85251a5a8a18e"
+
+# KV namespace for caching (create with: npx wrangler kv:namespace create RELAY_CACHE)
+# After creating, paste the id below
+[[kv_namespaces]]
+binding = "RELAY_CACHE"
+id = "19a0024edcd84eb490a9b66cbe6ecf55"
+
+# Browser Rendering binding
+[browser]
+binding = "BROWSER"
+
+# Cron trigger — scrape the index every 24 hours
+[triggers]
+crons = ["0 0 * * *"]
+
+# Environment variables
+[vars]
+# The base URL of the site to scrape — configure this to your target
+INDEX_URL = "https://steamrip.com/games-list-page/"
+BASE_URL = "https://steamrip.com"
+# Cache TTL in seconds (default 24 hours)
+CACHE_TTL = "86400"

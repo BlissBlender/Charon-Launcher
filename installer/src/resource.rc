@@ -1,0 +1,43 @@
+#include "resource.h"
+#include <windows.h>
+
+IDI_APPICON ICON "../../launcher/build/icon.ico"
+IDR_HTML_UI RCDATA "../ui_dist/index.html"
+
+1 VERSIONINFO
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEOS 0x40004
+FILETYPE 0x1
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "040904b0"
+        {
+            VALUE "FileDescription", "Charon Game Launcher Setup"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "CharonInstaller.exe"
+            VALUE "OriginalFilename", "CharonInstaller.exe"
+            VALUE "ProductName", "Charon Game Launcher Setup"
+            VALUE "ProductVersion", "1.0.0.0"
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x409, 1200
+    }
+}
+
+1 24
+{
+    "<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>"
+    "<assembly xmlns=""urn:schemas-microsoft-com:asm.v1"" manifestVersion=""1.0"">"
+    "  <trustInfo xmlns=""urn:schemas-microsoft-com:asm.v3"">"
+    "    <security>"
+    "      <requestedPrivileges>"
+    "        <requestedExecutionLevel level=""asInvoker"" uiAccess=""false""/>"
+    "      </requestedPrivileges>"
+    "    </security>"
+    "  </trustInfo>"
+    "</assembly>"
+}

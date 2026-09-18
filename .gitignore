@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build & Dist Outputs
+dist/
+dist-installer/
+build/
+out/
+bin/
+obj/
+
+# Logs & Temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.tmp
+*.bak
+*.download
+scratch/
+downloads/
+*.rar
+*.zip
+*.7z
+
+# IDE & System
+.vscode/
+.idea/
+.vs/
+*.suo
+*.user
+Thumbs.db
+Desktop.ini
