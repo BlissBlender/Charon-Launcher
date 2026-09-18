@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * Charon One-Click Release Publisher
  * ============================================================================
@@ -38,16 +38,17 @@ if (!fs.existsSync(setupExe)) {
 console.log('\n[2/4] Building custom high-tech installer...');
 execSync(`node "${path.join(INSTALLER_DIR, 'tools', 'build_custom_installer.js')}"`, { stdio: 'inherit' });
 
-// 3. Prepare distribution zip and setup files
-console.log('\n[3/4] Packaging versioned and permanent distribution archives...');
-const distDir = path.join(OUT_DIR, 'CharonSetup-dist');
-const versionedZip = path.join(OUT_DIR, `Charon-Custom-Installer-${tag}.zip`);
-const permanentZip = path.join(OUT_DIR, 'Charon-Custom-Installer.zip');
+// 3. Package single-file standalone installer executable
+console.log('\n[3/4] Compiling single-file standalone installer (Charon-Custom-Installer.exe)...');
+const makensisPath = 'C:\\Users\\USER\\AppData\\Local\\electron-builder\\Cache\\nsis\\nsis-3.0.4.1\\Bin\\makensis.exe';
+const nsiScript = path.join(INSTALLER_DIR, 'tools', 'package_single_exe.nsi');
+execSync(`"${makensisPath}" "${nsiScript}"`, { stdio: 'inherit' });
 
-// Compress CharonSetup-dist
-console.log('  Compressing custom installer distribution...');
-execSync(`powershell -NoProfile -Command "Compress-Archive -Path '${distDir}\\*' -DestinationPath '${versionedZip}' -Force"`, { stdio: 'inherit' });
-fs.copyFileSync(versionedZip, permanentZip);
+const singleExe = path.join(OUT_DIR, 'Charon-Custom-Installer.exe');
+const versionedExe = path.join(OUT_DIR, `Charon-Custom-Installer-${tag}.exe`);
+const cleanSetupExe = path.join(OUT_DIR, 'CharonSetup.exe');
+fs.copyFileSync(singleExe, versionedExe);
+fs.copyFileSync(singleExe, cleanSetupExe);
 
 // Standard setup
 const versionedSetup = path.join(OUT_DIR, `Charon-Game-Launcher-Setup-${version}.exe`);
@@ -65,24 +66,25 @@ const ymlDst = path.join(OUT_DIR, 'latest.yml');
 if (fs.existsSync(ymlSrc)) fs.copyFileSync(ymlSrc, ymlDst);
 
 // 4. Publish to GitHub Release
-console.log(`\n[4/4] Publishing assets to GitHub release ${tag}...`);
-const notes = `Charon Game Launcher ${tag} Release. Includes custom installer, standard setup, and background differential update packages.`;
+console.log(`\n[4/4] Publishing single-file assets to GitHub release ${tag}...`);
+const notes = `Charon Game Launcher ${tag} Official Release. Includes standalone single-file custom installer, standard setup, and background differential update packages.`;
 
 try {
-  execSync(`gh release create ${tag} "${versionedZip}" "${permanentZip}" "${versionedSetup}" "${permanentSetup}" "${asarDst}" "${ymlDst}" --title "Charon Game Launcher ${tag}" --notes "${notes}"`, { cwd: ROOT_DIR, stdio: 'inherit' });
-  console.log(`  ✓ Release ${tag} created and assets uploaded.`);
+  execSync(`gh release create ${tag} "${versionedExe}" "${singleExe}" "${cleanSetupExe}" "${versionedSetup}" "${permanentSetup}" "${asarDst}" "${ymlDst}" --title "Charon Game Launcher ${tag}" --notes "${notes}"`, { cwd: ROOT_DIR, stdio: 'inherit' });
+  console.log(`  ✓ Release ${tag} created and single-file assets uploaded.`);
 } catch {
   console.log(`  Release ${tag} already exists. Uploading/clobbering assets...`);
-  execSync(`gh release upload ${tag} "${versionedZip}" "${permanentZip}" "${versionedSetup}" "${permanentSetup}" "${asarDst}" "${ymlDst}" --clobber`, { cwd: ROOT_DIR, stdio: 'inherit' });
-  console.log(`  ✓ Assets uploaded to existing release ${tag}.`);
+  execSync(`gh release upload ${tag} "${versionedExe}" "${singleExe}" "${cleanSetupExe}" "${versionedSetup}" "${permanentSetup}" "${asarDst}" "${ymlDst}" --clobber`, { cwd: ROOT_DIR, stdio: 'inherit' });
+  console.log(`  ✓ Single-file assets uploaded to existing release ${tag}.`);
 }
 
 console.log('\n===========================================================');
 console.log('  RELEASE PUBLISHED SUCCESSFULLY ✓');
 console.log('===========================================================');
-console.log(`  Permanent Custom Installer Link (For your website):`);
-console.log(`  -> https://github.com/BlissBlender/Charon-Launcher/releases/latest/download/Charon-Custom-Installer.zip\n`);
+console.log(`  Permanent Custom Installer Link (Single .exe for website):`);
+console.log(`  -> https://github.com/BlissBlender/Charon-Launcher/releases/latest/download/Charon-Custom-Installer.exe\n`);
 console.log(`  Permanent Standard Setup Link:`);
 console.log(`  -> https://github.com/BlissBlender/Charon-Launcher/releases/latest/download/Charon-Game-Launcher-Setup.exe\n`);
 console.log(`  Release Page:`);
 console.log(`  -> https://github.com/BlissBlender/Charon-Launcher/releases/tag/${tag}\n`);
+
